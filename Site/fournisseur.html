@@ -18,6 +18,8 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="CSS/styles.css" rel="stylesheet" />
+        <!-- js -->
+        <script type="text/javascript" src="JS/connexionMetamask.js"></script>
     </head>
     <body id ="page-top">
             <!-- Navigation-->
@@ -40,8 +42,8 @@
             <header class="masthead">
               <div class="container">
                   <div class="masthead-heading text-uppercase">DNS On Blockchain</div>
-                  <a class="btn btn-primary btn-xl text-uppercase" href="user.html">Connexion</a>
-                  
+                  <button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
+                  <p id="connectButton"></p>
               </div>  
           </header>
 
@@ -55,7 +57,7 @@
        <!-- Bootstrap core JS-->
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
        <!-- Core theme JS-->
-       <script src="js/scripts.js"></script>
+       <!-- <script src="js/scripts.js"></script> -->
        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
        <!-- * *                               SB Forms JS                               * *-->
        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
