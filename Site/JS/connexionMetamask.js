@@ -12,6 +12,7 @@ async function connectMetaMask(){
         document.getElementById("connectButton").innerHTML = "Connected";
         
         const accounts = await ethereum.request({ method: "eth_accounts" });
+        document.getElementById("adressePublique").innerHTML = accounts;
         console.log(accounts);
     }
     else {

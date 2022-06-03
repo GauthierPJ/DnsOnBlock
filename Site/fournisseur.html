@@ -42,15 +42,54 @@
             <header class="masthead">
               <div class="container">
                   <div class="masthead-heading text-uppercase">DNS On Blockchain</div>
+                  <!-- faire disparaitre le bouton une fois connecté -->
                   <button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
                   <p id="connectButton"></p>
+                  
               </div>  
           </header>
 
           <div class="text-center">
             <br>
-            <h2 class="section-heading text-uppercase">Explications</h2>
-            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+            <h2 class="section-heading text-uppercase">Compte </h2><p id="adressePublique"></p>
+            <button class="btn btn-primary btn-xl text-uppercase" onclick="">Acheter un nom de domaine</button>
+            <br><br>
+            <h3 class="section-subheading text-muted">Noms de domaines et IP :</h3>
+            <br>
+            <table class="table table-striped container">
+                <thead >
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom de domaine</th>
+                    <th scope="col">Adresse IP</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Revendre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>google.com</td>
+                    <td>8.8.8.8</td>
+                    <td><button class="btn btn-primary text-uppercase" onclick="">Update</button></td>
+                    <td><button class="btn btn-primary text-uppercase" onclick="">Revendre</button></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                    <td>@mdo</td>
+                  </tr>
+                </tbody>
+              </table>
           </div>
         
 
