@@ -34,6 +34,7 @@ app.use(function(req, res, next){
   delete req.session.error;
   delete req.session.success;
   res.locals.message = '';
+  console.log(res.locals.message+"ok"+msg);
   if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
   next();
@@ -53,7 +54,6 @@ var users = {
 function authenticate(fn) {
   
   var user = connexion();
-  console.log("okkkk");
   // query the db for the given username
   if (!user) return fn(null, null)
   // apply the same algorithm to the POSTed password, applying
@@ -101,8 +101,6 @@ app.get('/login', function(req, res){
 
 app.post('/login', function (req, res, next) {
   // après avoir appuyé sur login
-  
-  console.log("authenticate"+req.body.account);
   authenticate(function(err, user){
     if (err) return next(err)
     if (user) {
@@ -114,12 +112,10 @@ app.post('/login', function (req, res, next) {
         // or in this case the entire user object
         // initialise la session
         req.session.user = user;
-        console.log("affichage");
         req.session.success = 'Authenticated as ' + user.name
           + ' click to <a href="/logout">logout</a>. '
           + ' You may now access <a href="/restricted">/restricted</a>.';
-        res.redirect('back');
-        console.log(req.session.success);
+        res.redirect('/login');
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
