@@ -26,6 +26,8 @@ app.use(session({
   secret: 'shhhh, very secret'
 }));
 
+app.use(express.static(__dirname + '/public/'));
+
 // Session-persisted message middleware
 
 app.use(function(req, res, next){
@@ -34,13 +36,13 @@ app.use(function(req, res, next){
   delete req.session.error;
   delete req.session.success;
   res.locals.message = '';
-  console.log(res.locals.message+"ok"+msg);
   if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
+  console.log("res "+res.locals.message);
   next();
 });
 
-app.use(express.static(__dirname + '/public/'));
+
 
 // dummy database
 
@@ -52,7 +54,6 @@ var users = {
 // Authenticate using our plain-object database of doom!
 
 function authenticate(fn) {
-  
   var user = connexion();
   // query the db for the given username
   if (!user) return fn(null, null)
@@ -115,7 +116,7 @@ app.post('/login', function (req, res, next) {
         req.session.success = 'Authenticated as ' + user.name
           + ' click to <a href="/logout">logout</a>. '
           + ' You may now access <a href="/restricted">/restricted</a>.';
-        res.redirect('/login');
+        res.redirect('back');
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
