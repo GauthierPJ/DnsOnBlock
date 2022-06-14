@@ -85,7 +85,9 @@ app.get('/', function(req, res){
 });
 
 app.get('/restricted', restrict, function(req, res){
-  res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
+  // console.log(req);
+  console.log('okrestricted');
+  res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>'+req.session.user);
 });
 
 app.get('/logout', function(req, res){
@@ -102,6 +104,7 @@ app.get('/login', function(req, res){
 
 app.post('/login', function (req, res, next) {
   // après avoir appuyé sur login
+  console.log("authenticate"+req.body.account);
   authenticate(function(err, user){
     if (err) return next(err)
     if (user) {
@@ -112,17 +115,18 @@ app.post('/login', function (req, res, next) {
         // in the session store to be retrieved,
         // or in this case the entire user object
         // initialise la session
-        req.session.user = user;
+        req.session.user = req.body.account;
         req.session.success = 'Authenticated as ' + user.name
           + ' click to <a href="/logout">logout</a>. '
           + ' You may now access <a href="/restricted">/restricted</a>.';
-        res.redirect('back');
+        // window.location.assign('/restricted');
+        res.send('/restricted');
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
         + ' username and password.'
         + ' (use "tj" and "foobar")';
-      res.redirect('/login');
+      res.redirect('/restricted');
     }
   });
 });

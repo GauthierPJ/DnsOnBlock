@@ -22,7 +22,7 @@ async function connectMetaMask(){
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = function() { // Call a function when the state changes.
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                // Request finished. Do processing here.
+                window.location = this.responseText;
             }
         }
         xhr.send("account="+accounts);
