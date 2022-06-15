@@ -38,7 +38,6 @@ app.use(function(req, res, next){
   res.locals.message = '';
   if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
-  console.log("res "+res.locals.message);
   next();
 });
 
@@ -78,16 +77,25 @@ function restrict(req, res, next) {
     res.redirect('/login');
   }
 }
-
+// get record adresse publique
+//voir js appel fonction solidity
 app.get('/', function(req, res){
-  console.log("get");
   res.redirect('/login');
 });
 
+function showHtml() {
+  const resultat = '  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">  <div class="container">      <a class="navbar-brand" href="#page-top"><img src="CSS/unnamed.png" alt="..." /></a>      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">          Menu          <i class="fas fa-bars ms-1"></i>      </button>      <div class="collapse navbar-collapse" id="navbarResponsive">          <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">              <li class="nav-item"><a class="nav-link" href="user.html">Espace utilisateur</a></li>              <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>          </ul>      </div>  </div></nav>Wahoo! restricted area,   click to <a href="/logout">logout</a>';
+  return resultat;
+}
 app.get('/restricted', restrict, function(req, res){
-  // console.log(req);
-  console.log('okrestricted');
-  res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>'+req.session.user);
+  // const txt = showHtml();
+  const button = 'Wahoo! restricted area, click to <a href="/logout">logout</a>'
+  // res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>'+req.session.user);
+  // envoyer des données
+  // res.send(button+req.session.user);
+  // envoyer vers la page restricted
+  console.log(req.session.success);
+  res.render('restricted');
 });
 
 app.get('/logout', function(req, res){
@@ -104,7 +112,6 @@ app.get('/login', function(req, res){
 
 app.post('/login', function (req, res, next) {
   // après avoir appuyé sur login
-  console.log("authenticate"+req.body.account);
   authenticate(function(err, user){
     if (err) return next(err)
     if (user) {
@@ -116,17 +123,16 @@ app.post('/login', function (req, res, next) {
         // or in this case the entire user object
         // initialise la session
         req.session.user = req.body.account;
-        req.session.success = 'Authenticated as ' + user.name
-          + ' click to <a href="/logout">logout</a>. '
-          + ' You may now access <a href="/restricted">/restricted</a>.';
-        // window.location.assign('/restricted');
+        
+        req.session.success = req.session.user;
+        console.log(req.session.success);
         res.send('/restricted');
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
         + ' username and password.'
         + ' (use "tj" and "foobar")';
-      res.redirect('/restricted');
+      res.redirect('/login');
     }
   });
 });

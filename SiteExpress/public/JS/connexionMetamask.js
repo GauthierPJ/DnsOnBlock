@@ -31,3 +31,16 @@ async function connectMetaMask(){
         document.getElementById("connectButton").innerHTML ="Please install MetaMask";
       }
 }
+
+async function deconnect(){
+
+    var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/login', true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() { // Call a function when the state changes.
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                window.location = this.responseText;
+            }
+        }
+        xhr.send('/logout');
+}

@@ -1,27 +1,17 @@
-
 <%- include('head', { title: 'Authentication Example' }) -%>
 
-<!-- <h1>Login</h1>
 
-Try accessing <a href="/restricted">/restricted</a>, then authenticate with "tj" and "foobar".
-<form method="post" action="/login">
-  <p>
-    <label for="username">Username:</label>
-    <input type="text" name="username" id="username">
-  </p>
-  <p>
-    <label for="password">Password:</label>
-    <input type="text" name="password" id="password">
-  </p>
-  <p>
-    <input type="submit" value="Login">
-  </p>
-  <p id="connectButton"></p>
-</form> -->
-<%- message %>
-<br>ok<br>
+<header class="masthead">
+  <%- message %>
 
-<button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
+
 <p id="connectButton"></p>
 <p id="adressePublique"></p>
+  <div class="text-center">
+    <button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
+    <h2 class="section-heading text-uppercase">Explications</h2>
+    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+  </div>
+  <button class="btn btn-primary btn-xl text-uppercase" onclick="connectSolidity()">Connexion sol</button>
+</header>
 <%- include('foot') -%>
