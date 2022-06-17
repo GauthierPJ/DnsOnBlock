@@ -23,3 +23,18 @@ header.masthead {
     background-position: center center;
     background-size: cover;
 }
+
+.navbar-brand {
+    color: #b4632a!important;
+}
+
+.btn {
+    /* color: white!important; */
+    color: white!important;
+    background-color: #b4632a;
+    border-color : #b4632a;
+}
+.btn:hover{
+    background-color: #b4632a;
+    border-color : white;
+}

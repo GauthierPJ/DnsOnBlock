@@ -2,16 +2,16 @@
 
 
 <header class="masthead">
-  <%- message %>
-
-
-<p id="connectButton"></p>
-<p id="adressePublique"></p>
   <div class="text-center">
+    <br>
     <button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
+    <%- message %>
     <h2 class="section-heading text-uppercase">Explications</h2>
-    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+    <h3 class="section-subheading text-muted" style="color: #b4632a!important;">Lorem ipsum dolor sit amet consectetur.</h3>
   </div>
   <button class="btn btn-primary btn-xl text-uppercase" onclick="connectSolidity()">Connexion sol</button>
+
+  <p id="connectButton"></p>
+  <p id="adressePublique"></p>
 </header>
 <%- include('foot') -%>
