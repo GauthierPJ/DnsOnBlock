@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
+<script>
+
+const contract = "0xb6ddea8a7f00c2eb5825db06e0f3e9a4ce081985"
+const daiAbi = [
+    "function get_ip(string memory _dn) public view returns(string memory)",
+    "function get_records(address _addr) public view returns(string[] memory)",
+    "function set_record(string memory _ipv4, string memory _dn, address _addr) public",
+    "function update_ip(string memory _dn, string memory _newip) public"
+]
+
+
+var signeur;
+
+
+
+async function connectMetaMask (){
+
+if(typeof window.ethereum !== "undefined"){
+    try
+    {
+        await ethereum.request({ method: "eth_requestAccounts" });
+    }
+    catch (error) {
+        console.log(error);
+    }
+   
+    document.getElementById("connectButton").innerHTML = "Connected";
+    
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+    signeur = (accounts[0]);
+    
+    
+}
+else {
+    document.getElementById("connectButton").innerHTML ="Please install MetaMask";
+  }
+}
+
+
+function tryBuying(){
+    var http = new XMLHttpRequest();
+    var url = '/buy';
+    var params = 'buyer='+signeur+'&domain='+document.getElementById('domainName').value;
+    http.open('POST', url, true);
+
+    //Send the proper header information along with the request
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+    http.onreadystatechange = function() {//Call a function when the state changes.
+        if(http.readyState == 4 && http.status == 200) {
+            console.log(http.responseText);
+        }
+    }
+    http.send(params);
+}
+
+
+</script>
+<div id="Connexion">
+    <button id="connectButton" onclick="connectMetaMask()">Connexion</button>
+</div>
+<h2>Obtenir un nom de domaine</h2>
+<div>
+    <input id="domainName" type="text"/><button onclick="tryBuying()">Get Domain</button>
+</div>
+</html>

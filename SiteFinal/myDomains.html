@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
+<script>
+
+const contract = "0xb6ddea8a7f00c2eb5825db06e0f3e9a4ce081985"
+const daiAbi = [
+    "function get_ip(string memory _dn) public view returns(string memory)",
+    "function get_records(address _addr) public view returns(string[] memory)",
+    "function update_owner(address _owner, address _newowner) public ",
+    "function update_ip(string memory _dn, string memory _newip, address _owner) public"
+]
+
+
+var signeur;
+
+async function pageSetup(signer){
+    owned_domains = await get_owner_dn(signer) // replace by right value here
+    if(owned_domains){
+        document.getElementById('ListDomains').innerHTML =""
+        for(i=0;i<owned_domains.length;i++){
+            document.getElementById('ListDomains').innerHTML += '<a href="#" onclick="setDomainName(\''+owned_domains[i]+'\')">'+owned_domains[i]+'</a><br>'
+        }
+    }
+}
+
+
+async function connectMetaMask (){
+
+if(typeof window.ethereum !== "undefined"){
+    try
+    {
+        await ethereum.request({ method: "eth_requestAccounts" });
+    }
+    catch (error) {
+        console.log(error);
+    }
+   
+    document.getElementById("connectButton").innerHTML = "Connected";
+    
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+    pageSetup(accounts[0]);
+    signeur = accounts[0]
+    
+    
+}
+else {
+    document.getElementById("connectButton").innerHTML ="Please install MetaMask";
+  }
+}
+
+
+async function get_dn_ip(DomainName){
+
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+await provider.send("eth_requestAccounts", []);
+
+const daiContract = new ethers.Contract(contract, daiAbi, provider.getSigner());
+
+asked_ip = await daiContract.get_ip(DomainName)
+console.log(asked_ip)
+
+}
+
+async function get_owner_dn(Owner){
+
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+await provider.send("eth_requestAccounts", []);
+
+const daiContract = new ethers.Contract(contract, daiAbi, provider.getSigner());
+
+domains = await daiContract.get_records(Owner)
+return(domains)
+}
+
+async function update_dn_ip(DN,IP){
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+await provider.send("eth_requestAccounts", []);
+
+const daiContract = new ethers.Contract(contract, daiAbi, provider.getSigner());
+
+asked_ip = await daiContract.update_ip(DN,IP,signeur)
+console.log(asked_ip)
+
+}
+
+
+DomainName = "None"
+
+function setDomainName(domain){
+    DomainName = domain
+    document.getElementById('selected').innerHTML = domain
+}
+
+</script>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="Pictures/wp2337017.webp" />
+    <!-- Vue js -->
+    <script src="https://unpkg.com/vue@3"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <title>Mon titre</title>
+  </head>
+  
+<header class="masthead">
+    <nav class="navbar navbar-expand-lg ">
+      <div class="container-fluid">
+        <!-- <a class="navbar-brand" href="#">DNS On Blockchain</a> -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+          </ul>
+        </div>
+        <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
+          <ul class="navbar-nav">
+            
+            <li class="nav-item ">
+              <button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="text-center">
+      <br>
+      <button class="btn btn-primary btn-xl text-uppercase" onclick="connectMetaMask()">Connexion</button>
+      <%- message %>
+      <h2 class="section-heading text-uppercase">Explications</h2>
+      <h3 class="section-subheading text-muted" style="color: #b4632a!important;">Lorem ipsum dolor sit amet consectetur.</h3>
+    </div>
+  
+    <p id="connectButton"></p>
+    <p id="adressePublique"></p>
+</header>
+
+<body>
+    test
+</body>
+
+<div id="Connexion">
+    <button id="connectButton" onclick="connectMetaMask()">Connexion</button>
+</div>
+<h2>Mes noms de domaine</h2>
+<div id="ListDomains">
+    Rien ici..
+</div>
+<h2>Paneau de contrôle :</h2>
+<div id="Controls"></div>
+    <h3 id="selected">Aucun nom de domaine sélectionné</h3>
+    <p>Nouvelle IP :</p>
+    <input id="newIP" type="text"/><button onclick="update_dn_ip(DomainName,document.getElementById('newIP').value)">Update</button>
+    <!-- <p>Nouveau proriétaire :</p>
+    <input id="newOwner" type="text"/><button onclick="update_dn_owner(DomainName,document.getElementById('newOwner').value)">Update</button> -->
+    <!-- Pas l'air fonctionnel => voire le SC avec gaut -->
+</html>
