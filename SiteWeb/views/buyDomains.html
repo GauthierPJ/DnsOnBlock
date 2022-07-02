@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<head>
+    <title>Obtenir - DnsOnBlock</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
+<script>
+
+const contract = "0xb6ddea8a7f00c2eb5825db06e0f3e9a4ce081985"
+const daiAbi = [
+    "function get_ip(string memory _dn) public view returns(string memory)",
+    "function get_records(address _addr) public view returns(string[] memory)",
+    "function set_record(string memory _ipv4, string memory _dn, address _addr) public",
+    "function update_ip(string memory _dn, string memory _newip) public"
+]
+
+
+var signeur;
+
+
+
+async function connectMetaMask (){
+
+if(typeof window.ethereum !== "undefined"){
+    try
+    {
+        await ethereum.request({ method: "eth_requestAccounts" });
+    }
+    catch (error) {
+        console.log(error);
+    }
+   
+    document.getElementById("connectButton").innerHTML = "<span style=\"color:green\">● </span>Connecté";
+    
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+    signeur = (accounts[0]);
+    document.cookie=signeur
+    
+}
+else {
+    document.getElementById("connectButton").innerHTML ="Please install MetaMask";
+  }
+}
+
+
+function tryBuying(){
+
+    domaine = document.getElementById('domainName').value
+
+    if(!signeur){
+        alert("Vous devez vous connecter.")
+        return -1
+    }
+
+    if(domaine.length <5 || !domaine.endsWith('.pfe')){
+        alert("Nom de domaine invalide.")
+        return -2
+    }
+
+    var http = new XMLHttpRequest();
+    var url = '/buy';
+    var params = 'buyer='+signeur+'&domain='+domaine;
+    http.open('POST', url, true);
+
+    //Send the proper header information along with the request
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+    http.onreadystatechange = function() {//Call a function when the state changes.
+        if(http.readyState == 4 && http.status == 200) {
+            console.log(http.responseText)
+            if(http.responseText=='{"status":"success"}'){
+                alert("Ce nom de domaine vous a été attribué")
+            }
+            else{
+                alert("Ce nom de domaine n'a pas pu vous être attribué")
+            }
+        }
+    }
+    http.send(params);
+}
+
+
+</script>
+
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/buy">
+        <img src="/img/blockchain.png" alt="" width="40px" class="d-inline-block align-text-top">
+        DnsOnBlockchain
+      </a>
+      <a class="nav-link" href="/buy">Obtenir un nom de domaine</a>
+      <a class="nav-link" href="/dashboard">Dashboard</a>
+      <button id="connectButton" class="btn btn-outline-dark" onclick="connectMetaMask()"><span style="color:red">● </span>Connexion</button>
+
+    </div>
+</nav>
+    <div style="background: fixed center no-repeat; background-size: auto; background-size: cover;  height: calc(80vh - 54px);  display: flex;align-items: center;justify-content: center;flex-wrap: wrap;">
+        <div class="container-fluid" >
+            <div class="row">
+            <div class="col-3"></div>
+            <div class="col-9">
+                <h2 class="display-6 ">Obtenir un nom de domaine</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-5">
+                    <input  class="form-control"  id="domainName" type="text"/>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-outline-info"  onclick="tryBuying()">Obtenir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>
+
+
+<script>
+    if(document.cookie){
+        connectMetaMask()
+    }
+</script>

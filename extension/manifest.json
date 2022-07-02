@@ -1,0 +1,21 @@
+{
+
+  "manifest_version": 2,
+  "name": "DnsOnBlockResolver",
+  "version": "1.0",
+
+  "description": "Permet au navigateur de retrouver les DNS sur la blockchain.",
+
+  "icons": {
+    "48": "icons/border-48.png"
+  },
+
+  "background": 
+    {
+      "scripts": ["ethers.js","extension.js"]
+    },
+
+  "permissions": [
+    "search","webNavigation","tabs","<all_urls>","webRequest"
+  ]
+}

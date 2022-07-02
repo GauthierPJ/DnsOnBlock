@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<head>
+    <title>Dashboard - DnsOnBlock</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
+<script>
+
+const contract = "0xb6ddea8a7f00c2eb5825db06e0f3e9a4ce081985"
+const daiAbi = [
+    "function get_ip(string memory _dn) public view returns(string memory)",
+    "function get_records(address _addr) public view returns(string[] memory)",
+    "function update_owner(address _owner, address _newowner) public ",
+    "function update_ip(string memory _dn, string memory _newip, address _owner) public"
+]
+
+
+var signeur;
+
+async function pageSetup(signer){
+    document.getElementById('ListDomains').innerHTML = "<li class=\"list-group-item list-group-item-action\">Recherche...</li>"
+
+    try{
+        owned_domains = await get_owner_dn(signer) // replace by right value here
+
+        if(owned_domains){
+            document.getElementById('ListDomains').innerHTML =""
+            for(i=0;i<owned_domains.length;i++){
+                document.getElementById('ListDomains').innerHTML += "<li onclick=\"setDomainName('"+owned_domains[i]+"')\"class=\"list-group-item list-group-item-action\">"+owned_domains[i]+"</li>"
+             }  
+        }     
+
+    }catch{
+        document.getElementById('ListDomains').innerHTML = "<li class=\"list-group-item list-group-item-action\"> Aucun nom de domain trouvé</li>"
+
+    }
+}
+
+
+async function connectMetaMask (){
+
+if(typeof window.ethereum !== "undefined"){
+    try
+    {
+        await ethereum.request({ method: "eth_requestAccounts" });
+    }
+    catch (error) {
+        console.log(error);
+    }
+   
+    document.getElementById("connectButton").innerHTML = "<span style=\"color:green\">● </span>Connecté ";
+    
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+    pageSetup(accounts[0]);
+    signeur = accounts[0]
+    document.cookie = signeur
+    
+}
+else {
+    document.getElementById("connectButton").innerHTML ="Please install MetaMask";
+  }
+}
+
+
+async function get_dn_ip(DomainName){
+
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+await provider.send("eth_requestAccounts", []);
+
+const daiContract = new ethers.Contract(contract, daiAbi, provider.getSigner());
+
+asked_ip = await daiContract.get_ip(DomainName)
+console.log(asked_ip)
+
+}
+
+async function get_owner_dn(Owner){
+
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+await provider.send("eth_requestAccounts", []);
+
+const daiContract = new ethers.Contract(contract, daiAbi, provider.getSigner());
+
+domains = await daiContract.get_records(Owner)
+return(domains)
+}
+
+async function update_dn_ip(DN,IP){
+    
+    if(!signeur){
+        alert("Vous devez vous connecter.")
+        return -1
+    }
+
+    if(DN =="None"){
+        alert("Aucun nom de domaine seléctionné")
+        return -3
+    }
+
+    if(IP.length<7){
+        alert("IP incorrecte");
+        return -2
+    }
+
+   
+    try{
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    await provider.send("eth_requestAccounts", []);
+
+    const daiContract = new ethers.Contract(contract, daiAbi, provider.getSigner());
+
+    asked_ip = await daiContract.update_ip(DN,IP,signeur)
+    
+    alert("IP mise à jour avec succès !")
+        
+    }catch{
+        alert("Une erreur s'est produite.")
+
+    }
+    
+
+}
+
+
+DomainName = "None"
+
+function setDomainName(domain){
+    DomainName = domain
+    document.getElementById('selected').innerHTML = domain
+}
+
+
+
+</script>
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/buy">
+        <img src="/img/blockchain.png" alt="" width="40px" class="d-inline-block align-text-top">
+        DnsOnBlockchain
+      </a>      
+      <a class="nav-link" href="/buy">Obtenir un nom de domaine</a>
+      <a class="nav-link" href="/dashboard">Dashboard</a>
+      <button id="connectButton" class="btn btn-outline-dark" onclick="connectMetaMask()"><span style="color:red">● </span>Connexion</button>
+
+    </div>
+</nav>
+
+<div style="background: fixed center no-repeat; background-size: auto; background-size: cover;  height: calc(80vh - 54px);  display: flex;align-items: center;justify-content: center;flex-wrap: wrap;">
+
+<div id="Dashboard" class="container-fluid row">
+    <div id="List" class="col-6">
+        <h2 class="display-4">Mes noms de domaine</h2>
+        <ul class="list-group" id="ListDomains">
+            <li class="list-group-item">Connectez vous pour voir vos noms de domaines...</li>
+          </ul>
+        <div >
+
+            
+        </div>
+    </div>
+    <div id="Controls" class="col-6">
+
+        <h2  class="display-4">Paneau de contrôle</h2>
+        <h3  class="display-6" id="selected">Aucun nom de domaine sélectionné</h3>
+        <p>Nouvelle IP :</p>
+        <div class="row">
+            <div class="col-8">
+                <input  class="form-control" id="newIP" type="text"/>
+            </div>
+            <div class="col-4">
+                <button class="btn btn-outline-info" onclick="update_dn_ip(DomainName,document.getElementById('newIP').value)">Update</button>
+            </div>
+        </div>
+        <!-- <p>Nouveau proriétaire :</p>
+        <input id="newOwner" type="text"/><button onclick="update_dn_owner(DomainName,document.getElementById('newOwner').value)">Update</button> -->
+    
+    
+    </div>
+</div>
+</div>
+   <!-- Pas l'air fonctionnel => voire le SC avec gaut -->
+</html>
+<script>
+    if(document.cookie){
+        connectMetaMask()
+    }
+</script>
